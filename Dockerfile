@@ -8,6 +8,9 @@ WORKDIR /usr/src/app
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+ENV DJANGO_SUPERUSER_USERNAME admin
+ENV DJANGO_SUPERUSER_PASSWORD test123
+ENV DJANGO_SUPERUSER_EMAIL admin@example.com
 
 # install dependencies
 COPY requirements.txt .
@@ -22,6 +25,8 @@ COPY . /code/.
 # add and run as non-root user
 RUN adduser --disabled-password --gecos '' myuser
 USER myuser
+
+WORKDIR /code
 
 # run gunicorn
 CMD gunicorn your_project.wsgi:application --bind 0.0.0.0:$PORT
