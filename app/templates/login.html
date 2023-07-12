@@ -1,0 +1,27 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div id="content" align="center">
+        <form method="post">
+            {% csrf_token %}
+            <h2>Login</h2>
+            <div class="form-input">
+                <label for="username">Email:</label>
+                <input type="text" name="email" required id="email">
+            </div>
+            <div class="form-input">
+                <label for="password">Password:</label>
+                <input type="password" name="password" required id="password">
+            </div>``
+            <button type="submit">Login</button>
+        </form>
+        <a href='{% url "social:begin" "google-oauth2" %}'>Google+</a>
+    </div>
+</body>
+</html>
