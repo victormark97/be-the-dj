@@ -28,6 +28,9 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+LOGIN_REDIRECT_URL = 'home'
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -37,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'social_django',
     'app'
 ]
 
@@ -103,6 +107,24 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+# Social Auth
+AUTH_USER_MODEL = 'app.CustomUser'
+
+SOCIAL_AUTH_JSONFIELD_ENABLED = True
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+    'app.backends.EmailBackend',
+)
+
+SOCIAL_AUTH_JSONFIELD_ENABLED = True
+
+SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['email', 'name']
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '61862310632-9a0s2b5o17hil8gsucslu5qpa6knq3q9.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
 
 
 # Internationalization
