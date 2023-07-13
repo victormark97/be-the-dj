@@ -7,7 +7,6 @@ def login_view(request):
         email = request.POST['email']
         password = request.POST['password']
         user = authenticate(request, email=email, password=password)
-        print(user if user else "plm")
         if user is not None:
             login(request, user)
             # Redirect to a success page.
