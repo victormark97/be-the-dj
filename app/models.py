@@ -19,7 +19,7 @@ class CustomUserManager(BaseUserManager):
             raise ValueError('Password field must be set')
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
-        return self.create_user(email=email, password=password **extra_fields)
+        return self.create_user(email=email, password=password, **extra_fields)
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
