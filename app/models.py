@@ -80,6 +80,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin, SoftDeletionModel):
     class Meta:
         verbose_name = "User"
         verbose_name_plural = "Users"
+        indexes = [
+            models.Index(fields=['email'], name='email_index'),
+        ]
 
     @property
     def is_dj(self):
@@ -120,7 +123,15 @@ class CustomUser(AbstractBaseUser, PermissionsMixin, SoftDeletionModel):
 
 class DjProfile(SoftDeletionModel, ImageModel):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, null=True, blank=True)
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'is_active'], name='unique_active_user')
+        ]
+        indexes = [
+            models.Index(fields=['name'], name='name_index'),
+        ]
 
 
 class Location(SoftDeletionModel):
@@ -130,6 +141,11 @@ class Location(SoftDeletionModel):
 
     def __str__(self):
         return self.name
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['name', 'latitude', 'longitude', 'is_active'], name='unique_active_location')
+        ]
 
 
 class Event(SoftDeletionModel, ImageModel):
@@ -147,12 +163,23 @@ class Event(SoftDeletionModel, ImageModel):
     @property
     def is_live(self):
         return self.start <= timezone.now() <= self.end
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['start', 'end'], name='event_time_index'),
+        ]
+
 
 class Song(SoftDeletionModel):
-    spotify_url = models.URLField(max_length=200)
+    spotify_url = models.URLField(max_length=200, unique=True)
     artist = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
     image_url = models.URLField(max_length=200)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['spotify_url'], name='spotify_url_index'),
+        ]
 
 
 class SongRequest(SoftDeletionModel):
@@ -169,7 +196,7 @@ class SongRequest(SoftDeletionModel):
         (REJECTED, 'Rejected'),
         (EXPIRED, 'Expired'),
     ]
-    
+
 
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user_song_requests')
@@ -183,6 +210,11 @@ class SongRequest(SoftDeletionModel):
         REQUESTED: [REJECTED, PENDING],
         PENDING: [EXPIRED, PLAYED]
     }
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['status', 'last_status_timestamp'], name='status_time_index'),
+        ]
 
     def change_state(self, state):
         allowed_states = self.ALLOWED_TRANSITIONS.get(self.status)
