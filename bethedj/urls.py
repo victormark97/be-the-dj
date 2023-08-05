@@ -18,13 +18,22 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views.generic.base import RedirectView
 
-from app.views import home, login_view, logout_view
+from app.views import CreateEventView, CreateLocationView, HomeView, LoginView, LogoutView, CreateSongRequestView
+
+create_patterns = [
+    path('location/', CreateLocationView.as_view(), name='create_location'),
+    path('event/', CreateEventView.as_view(), name='create_event'),
+    path('song_request/', CreateSongRequestView.as_view(), name='create_song_request'),
+]
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', RedirectView.as_view(url='home/', permanent=True)),
-    path('home/', home, name='home'),
+    path('home/', HomeView.as_view(), name='home'),
     path('accounts/social-auth/', include('social_django.urls', namespace='social')),
-    path('accounts/login/', login_view, name='login'),
-    path('logout/', logout_view, name='logout'),
+    path('accounts/login/', LoginView.as_view(), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
+
+    # Create -> the path included here will be /create/<pattern>
+    path('create/', include((create_patterns, 'app'), namespace='create')),
 ]
